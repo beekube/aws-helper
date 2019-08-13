@@ -18,7 +18,7 @@ sleep 2
 
 # with nvme driver the real device is nvmeXn1 symlinked. 
 zar=$(readlink $deviceId )
-if [ -z "$zar" ]; then
+if [ ! -z "$zar" ]; then
   # do nothing
   echo "valid device"
 else
