@@ -20,6 +20,7 @@ sleep 2
 zar=$(readlink $deviceId )
 if [ -z "$zar" ]; then
   # do nothing
+  echo "valid device"
 else
   deviceId=$(readlink -e $deviceId )
   echo "Reolved symlink to $zar"
