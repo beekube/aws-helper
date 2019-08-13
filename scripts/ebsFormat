@@ -1,11 +1,13 @@
 #!/bin/bash
 
 # Get a valid device name
-str=$(lsblk -d -J | jq -r -c '.blockdevices | map(.name) | .[-1]' )
-next=$(echo "${str: -1}" | tr '[a-y]z' '[b-z]a')
-deviceId="/dev/xvd$next"
+# taken as parameter
+#str=$(lsblk -d -J | jq -r -c '.blockdevices | map(.name) | .[-1]' )
+#next=$(echo "${str: -1}" | tr '[a-y]z' '[b-z]a')
+#deviceId="/dev/xvd$next"
 
 ebs=$1 #"vol-0342621a9c6047908"
+deviceId=$2
 
 # Attach the volume
 aws ec2 attach-volume --device $deviceId --volume-id $ebs --instance-id $(wget -q -O - http://169.254.169.254/latest/meta-data/instance-id)
@@ -13,6 +15,16 @@ aws ec2 attach-volume --device $deviceId --volume-id $ebs --instance-id $(wget -
 echo "$deviceId"
 
 sleep 2
+
+# with nvme driver the real device is nvmeXn1 symlinked. 
+zar=$(readlink $deviceId )
+if [ -z "$zar" ]; then
+  # do nothing
+else
+  deviceId=$(readlink -e $deviceId )
+  echo "Reolved symlink to $zar"
+fi
+
 
 # Format if the fs is `data`
 currentfs=$(file -s $deviceId | awk '{print $2}')
