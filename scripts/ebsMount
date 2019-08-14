@@ -7,6 +7,8 @@
 
 ebs=$1 #"vol-0342621a9c6047908"
 deviceId=$2
+ns=$3
+name=$4
 
 # Attach the volume
 aws ec2 attach-volume --device $deviceId --volume-id $ebs --instance-id $(wget -q -O - http://169.254.169.254/latest/meta-data/instance-id)
@@ -15,6 +17,6 @@ echo "$deviceId"
 
 sleep 2
 
-localmount="volumes/$2/$3"
+localmount="/volumes/$ns/$name"
 mkdir -p $localmount
 mount $deviceId $localmount
