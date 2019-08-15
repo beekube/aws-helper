@@ -1,0 +1,25 @@
+#!/bin/bash
+
+
+ebs=$1 #"vol-0342621a9c6047908"
+ns=$2
+name=$3
+
+echo "deleting docker volume $3"
+docker volume rm $3
+
+mountPath="/volumes/$ns/$name"
+echo "bomba. Unmount $mountPath"
+
+umount $mountPath
+retval=$?
+
+if [ $retval -ne 0 ]; then
+    echo "$mountPath is busy?"
+    lsof | grep $mountPath
+    
+    # COWARDLY refusing to unmount a device causing data loss
+    return 10
+fi
+
+exit 0
