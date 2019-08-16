@@ -18,7 +18,12 @@ sleep 2
 
 # with nvme driver the real device is nvmeXn1 symlinked. 
 zar=$(readlink $deviceId )
-if [ ! -z "$zar" ]; then
+echo ":::"
+readlink $deviceId
+echo "[$zar]"
+echo ":::"
+
+if [ -z "$zar" ]; then
   # do nothing
   echo "valid device"
 else
@@ -29,6 +34,7 @@ fi
 
 # Format if the fs is `data`
 currentfs=$(file -s $deviceId | awk '{print $2}')
+echo file -s $deviceId 
 echo "[$currentfs]"
 
 if [ "$currentfs" = "data" ]; then
