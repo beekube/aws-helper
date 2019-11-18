@@ -15,7 +15,17 @@ aws ec2 attach-volume --device $deviceId --volume-id $ebs --instance-id $(wget -
 
 echo "$deviceId"
 
-sleep 2
+retries=5
+while [[ ! -e $deviceId ]]
+    do
+        if (( retries-- == 0 ))
+            then echo >&2 '$deviceId never came up'
+            aws ec2 detach-volume --volume-id $ebs
+            exit 1
+        fi
+        sleep 1
+    done
+echo '$deviceId came up'
 
 localmount="/volumes/$ns/$name"
 mkdir -p $localmount
