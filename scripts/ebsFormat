@@ -11,6 +11,7 @@ deviceId=$2
 
 # Attach the volume
 aws ec2 attach-volume --device $deviceId --volume-id $ebs --instance-id $(wget -q -O - http://169.254.169.254/latest/meta-data/instance-id)
+aws ec2 wait volume-in-use --volume-ids $ebs
 
 echo "$deviceId"
 
