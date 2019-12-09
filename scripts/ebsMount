@@ -14,7 +14,9 @@ name=$4
 aws ec2 attach-volume --device $deviceId --volume-id $ebs --instance-id $(wget -q -O - http://169.254.169.254/latest/meta-data/instance-id)
 aws ec2 wait volume-in-use --volume-ids $ebs
 
-echo "$deviceId"
+sleep 2
+deviceId=/dev/$(lsblk | tail -1 | awk '{print $1}')
+echo "ciao $deviceId"
 
 retries=5
 while [[ ! -e $deviceId ]]
